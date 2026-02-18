@@ -1,0 +1,124 @@
+Offroad Terrain Segmentation: Advanced Methodology Analysis
+B.Tech CSE (AI & ML) - Technical Symposium
+------------------------------------------------------------------------------------------------------------------------------------------
+Team: DUAL PERSONALITY
+Leader: Abhinav Singh
+Members: Hardik Sharma, Amrit Tiwari
+Institute: VIT Bhopal University
+Date: February 2026
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 1: Title Slide
+
+Project Title: Offroad Terrain Segmentation
+
+Team Name: DUAL PERSONALITY
+
+Members: Abhinav Singh (Leader), Hardik Sharma, Amrit Tiwari
+
+Institution: VIT Bhopal University
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 2: Introduction & Problem Statement
+
+Objective: Develop a robust semantic segmentation model for unstructured offroad environments.
+
+Key Challenges:
+
+Extreme class imbalance (e.g., Sky vs. Ground Clutter).
+
+High-frequency texture details in "Dry" vs "Lush" vegetation.
+
+Detection of small, low-contrast hazards like Logs and Rocks.
+
+Hardware Setup: Training utilized NVIDIA T4 GPUs in a Kaggle environment.
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 3: Model Architecture: DINOv2 + ConvNeXt
+
+Backbone: DINOv2-Base (Frozen) pre-trained on massive self-supervised datasets.
+
+Segmentation Head: A custom ConvNeXt-based head for efficient feature extraction.
+
+Input Resolution: 518 x 518 pixels to maintain high-resolution spatial tokens (37 x 37 tokens).
+
+Loss Function: Combined Dice Loss, Focal Loss, and Weighted Cross-Entropy.
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 4: Methodology: SGDR & Weighted Loss
+
+Core Innovation: Stochastic Gradient Descent with Warm Restarts (SGDR).
+
+Implemented a non-monotonic learning rate schedule to maximize global minimum discovery.
+
+Warm Restarts: 30 epochs split into two cycles (T0=10, Tmult=2).
+
+The "Shake" Effect: Sudden LR spikes at Epoch 11 forced the model out of local minima.
+
+Weight Penalty: 5.0x multiplier applied to rare classes (Logs, Clutter, Rocks).
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 5: Quantitative Results: Methodology Benchmarking
+
+Overview: Comparison of Standard Benchmark vs. DUAL PERSONALITY SGDR.
+
+Benchmark Data:
+
+Ground Clutter: Standard (0.1250) vs SGDR (0.2822) -> +125.7% Growth
+
+Logs: Standard (0.1580) vs SGDR (0.2899) -> +83.4% Growth
+
+Rocks: Standard (0.2100) vs SGDR (0.3830) -> +82.3% Growth
+
+Lush Bushes: Standard (0.4200) vs SGDR (0.5956) -> +41.8% Growth
+
+Mean IoU (mIoU): Standard (0.3340) vs SGDR (0.5346)
+
+Note: Benchmark represents standard DINOv2 implementations without cost-sensitive scheduling.
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 6: Precision Performance: mAP@50 (TTA)
+
+Mean Average Precision (mAP@50): 0.4858
+
+Key Breakthroughs:
+
+Sky: 1.0000 AP (Perfect Detection).
+
+Trees: 0.7795 AP.
+
+Dry Grass: 0.7469 AP.
+
+Analysis: The model shows high confidence in dominant classes while maintaining pixel-accuracy in hard-to-detect areas.
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 7: Qualitative Analysis: Visual Validation
+
+Visual Elements:
+
+(Graph) Methodology: SGDR Learning Rate Schedule (Cycles at T=10 and T=20).
+
+(Chart) Performance Benchmarking: Exponential Growth in Hazard Detection (Visualizing the +125% growth in Ground Clutter).
+
+Technical Visual Breakdown:
+
+Small Object Definition: SGDR successfully localized thin structures (Logs) that were previously blurred into the background.
+
+Texture Discrimination: Clear differentiation between visually similar classes like "Dry Grass" and "Landscape".
+
+Edge Sharpness: TTA (Horizontal Flip) eliminated "pixel-jitter" at high-contrast boundaries (Trees vs. Sky).
+
+Feature Identification Table:
+
+Hazard Boundary: Standard (Diffuse/Disconnected) vs SGDR (Sharp/Continuous)
+
+Class Confidence: Standard (High Variance) vs SGDR (Stable/TTA Corrected)
+
+Noise Suppression: Standard (High) vs SGDR (Exceptional)
+------------------------------------------------------------------------------------------------------------------------------------------
+Slide 8: Conclusion & Future Scope
+
+Final Outcome: Successfully improved small-object IoU through SGDR and weighted penalties.
+
+Future Scope:
+
+Implement Tiled Inference to resolve small-object mAP thresholds.
+
+Shift from DINOv2-Base to DINOv2-Large for richer semantic features.
+
+Integrate a more complex decoder (DeepLabV3+ or SegFormer).
+
+Team Validation: Team DUAL PERSONALITY validated the robustness of Strategy SGDR.
